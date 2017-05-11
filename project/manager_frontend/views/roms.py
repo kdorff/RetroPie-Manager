@@ -2,6 +2,7 @@
 Views for roms
 """
 import os
+import xmltodict
 from operator import itemgetter
 
 from django.conf import settings
@@ -34,6 +35,33 @@ class RomListView(MultiFormView):
     def init_system(self):
         self.system_key = self.kwargs.get('system')
         self.system_path = os.path.join(settings.RECALBOX_ROMS_PATH, self.system_key)
+
+        self.system_games_dict = {}
+        self.gamelist_xml_path = os.path.join(settings.ES_CONF_GAMELISTS_PATH, self.system_key, "gamelist.xml")
+        ESimagePrefix = '~/.emulationstation/downloaded_images'
+        ESimagePrefixLen = len(ESimagePrefix)
+        if os.path.exists(self.system_path) and os.path.isfile(self.gamelist_xml_path):
+            gamesListFile = open(self.gamelist_xml_path)
+            gameList = xmltodict.parse(gamesListFile.read())['gameList']['game']
+            for game in gameList:
+                fixedPath = game.get('path', '')
+                if (fixedPath.startswith('./')):
+                    fixedPath = fixedPath[2:]
+                fixedImage = game.get('image', '')
+
+                if (fixedImage.startswith(ESimagePrefix)):
+                    fixedImage = '/static/ES_DL_IMAGES' + fixedImage[ESimagePrefixLen:]
+                gameDict = {
+                    'path': fixedPath,
+                    'name': game.get('name', ''),
+                    'genre': game.get('genre', ''),
+                    'desc': game.get('desc', ''),
+                    'image': fixedImage,
+                    'hasImg': str(game.get('image', '') != '')
+                }
+                print gameDict
+                self.system_games_dict[fixedPath] = gameDict
+            gamesListFile.close()
         
         # Only display existing and not hidded directories
         if not os.path.exists(self.system_path) or not os.path.isdir(self.system_path) or self.system_key.startswith('.'):
@@ -87,6 +115,7 @@ class RomListView(MultiFormView):
             'system_name': self.system_manifest['name'],
             'system_manifest': self.system_manifest,
             'total_roms': len(self.get_rom_choices()),
+            'system_games_dict': self.system_games_dict,
         })
         return context
 

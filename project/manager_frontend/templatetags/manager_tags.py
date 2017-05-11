@@ -9,4 +9,7 @@ def get_item(dictionary, key):
     
         {{ mydict|get_item:'foo' }}
     """
-    return dictionary.get(key)
+    if (dictionary):
+        return dictionary.get(key, '')
+    else:
+        return ''

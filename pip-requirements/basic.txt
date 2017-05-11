@@ -1,3 +1,4 @@
 # Basic dependancies, common to every versions and environments
 django>=1.8,<1.9
 autobreadcrumbs==1.1
+xmltodict==0.11.0

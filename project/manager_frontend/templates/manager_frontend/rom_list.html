@@ -1,5 +1,6 @@
 {% extends "manager_frontend/base.html" %}
 {% load i18n assets %}
+{% load manager_tags %}
 
 {% block page_more_js %}{{ block.super }}
     {% javascript_tag "js/dropzone.min.js" %}
@@ -93,8 +94,7 @@
             <thead>
                 <tr>
                     <th class="text-right"><small>#</small></th>
-                    <th>{% trans "Filename" %}</th>
-                    <th>{% trans "Size" %}</th>
+                    <th>{% trans "Details" %}</th>
                     <th class="text-center">{% trans "Check" %}</th>
                 </tr>
             </thead>
@@ -102,8 +102,28 @@
             {% for checkbox in delete_form.roms %}
                 <tr>
                     <td class="text-right"><small>{{ forloop.counter }}</small></td>
-                    <td>{{ checkbox.choice_value }}</td>
-                    <td>{{ checkbox.choice_label|filesizeformat }}</td>
+                    <td>
+                        <table>
+                            <tr>
+                                <th>Filename</th><td>{{ checkbox.choice_value }}</td>
+                                <td rowspan='5' width='150px'>
+                                    <img src='{{ system_games_dict|get_item:checkbox.choice_value |get_item:'image'  }}'/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Scrape Name</th><td>{{ system_games_dict|get_item:checkbox.choice_value |get_item:'name' }}</td></tr>
+                            </tr>
+                            <tr>
+                                <th>Size</th><td>{{ checkbox.choice_label|filesizeformat }}</td></tr>
+                            </tr>
+                            <tr>
+                                <th>Image?</th><td>{{ system_games_dict|get_item:checkbox.choice_value |get_item:'hasImg' }}</td></tr>
+                            </tr>
+                            <tr>
+                                <th>Description</th><td>{{ system_games_dict|get_item:checkbox.choice_value |get_item:'desc' }}</td></tr>
+                            </tr>
+                        </table>
+                    </td>
                     <td class="text-center">{{ checkbox.tag }}</td>
                 </tr>
             {% endfor %}

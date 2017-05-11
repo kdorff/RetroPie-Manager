@@ -146,13 +146,17 @@ MEDIA_ROOT = os.path.join(PROJECT_DIR, 'media')
 # Examples: "http://example.com/media/", "http://media.example.com/"
 MEDIA_URL = '/media/'
 
+username = getpass.getuser()
+# TODO add logic for when people run as root
+
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
 STATIC_ROOT = os.path.join(PROJECT_DIR, 'static')
 STATIC_URL = '/static/'
-STATICFILES_DIRS = (
+STATICFILES_DIRS = [
     os.path.join(PROJECT_DIR, "webapp_statics"),
-)
+    ('ES_DL_IMAGES', os.path.join('/home', username, '.emulationstation/downloaded_images')),
+]
 
 # For Django messages framework to avoid database requests
 MESSAGE_STORAGE = 'django.contrib.messages.storage.cookie.CookieStorage'
@@ -170,9 +174,6 @@ ASSETS_TAG_TEMPLATES = {
 # Recalbox needed paths
 #
 
-username = getpass.getuser()
-# TODO add logic for when people run as root
-
 # Path to directory that contains bios file
 RECALBOX_BIOS_PATH = os.path.join('/home', username, 'RetroPie/BIOS')
 # Path to directory that contains system roms directories
@@ -187,6 +188,8 @@ RECALBOX_CONF_BACKUP_PATH = '/opt/retropie/configs/all/retroarch.cfg.bak'
 ES_CONF_PATH = '/etc/emulationstation/es_systems.cfg'
 # Path to the ES configuration backup file
 ES_CONF_BACKUP_PATH = '/etc/emulationstation/es_systems.cfg.bak'
+# Path to the ES gamelist's folder
+ES_CONF_GAMELISTS_PATH = os.path.join('/home', username, '.emulationstation/gamelists')
 # Path to autostart.sh
 AS_SCRIPT_PATH = '/opt/retropie/configs/all/autostart.sh'
 # Path autostart.sh backup file
